@@ -2,7 +2,7 @@
 ; qemu-system-x86_64 -hda ./boot.bin
 
 ; specify assembly origins
-ORG 0x7c00                           ; where bootloader loads to. should start at 0 then JMP but will do this for now
+ORG 0x7c00                          ; where bootloader loads to. should start at 0 then JMP but will do this for now
 BITS 16                             ; tell assembler that we're using 16-bit architecture
 
 ; interrupt table: https://www.ctyme.com/intr/int.htm
