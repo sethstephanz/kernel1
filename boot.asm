@@ -2,11 +2,28 @@
 ; qemu-system-x86_64 -hda ./boot.bin
 
 ; specify assembly origins
-ORG 0x7c00                          ; where bootloader loads to. should start at 0 then JMP but will do this for now
+ORG 0
 BITS 16                             ; tell assembler that we're using 16-bit architecture
+_start:
+    jmp short start
+    nop                             ; required for BIOS parameter block
 
+times 33 db 0                       ; create 33 bytes to avoid real BIOS from corrupting/"correcting" code
 ; interrupt table: https://www.ctyme.com/intr/int.htm
 start:
+    jmp 0x7c0:step2
+
+step2:
+    ; don't trust BIOS to set things up correctly. set it up outselves
+    cli                             ; clear interrupts
+    mov ax, 0x7c0                   ; have to move this to ax first before transferring to data segment
+    mov ds, ax
+    mov es, ax
+    mov ax, 0x00
+    mov ss, ax
+    mov sp, 0x7c00
+    sti                             ; enable interrupts
+
     mov si, message                 ; move address of message into si
     call print                      ; call print subroutine
     jmp $
